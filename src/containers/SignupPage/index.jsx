@@ -3,38 +3,44 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   TextField,
   withStyles,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import styles from './styles';
+import PersonIcon from '@material-ui/icons/Person';
 import { Redirect, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import * as authActions from '../../actions/auth';
-import styles from './styles';
 
 class SigninPage extends Component {
   state = {
     email: '',
     password: '',
+    rePassword: '',
+    confirmTerm: false,
   };
 
-  handleLogin = (e) => {
+  componentDidMount() {}
+
+  handleRegister = (e) => {
     if (e) {
       e.preventDefault();
     }
-    const { email, password } = this.state;
+    const { email, password, rePassword, confirmTerm } = this.state;
     const { authActionCreators } = this.props;
-    const { login } = authActionCreators;
-    if (!email || !password) {
+    const { register } = authActionCreators;
+    if (!email || !password || !rePassword || !confirmTerm) {
       return;
     }
-    if (login) {
-      login({ email, password });
+    if (register) {
+      register({ email, password });
     }
   };
 
@@ -48,29 +54,29 @@ class SigninPage extends Component {
 
   render() {
     const { classes, authed } = this.props;
-    const { email, password } = this.state;
+    const { email, password, rePassword, confirmTerm } = this.state;
     return (
       <div className={classes.root}>
-        {authed && <Redirect to="/board" />}
-        <Card className={classes.loginWrapper}>
+        {authed && <Redirect to="/login" />}
+        <Card className={classes.registerWrapper}>
           <CardHeader
-            title="Login"
+            title="Register"
             className={classes.title}
             action={
-              <Link to="/register">
+              <Link to="/login">
                 <Button
                   color="primary"
-                  className={classes.buttonRegister}
+                  className={classes.buttonLogin}
                   variant="contained"
                   size="large"
                 >
-                  <AddIcon fontSize="large" />
+                  <PersonIcon fontSize="large" />
                 </Button>
               </Link>
             }
           />
           <CardContent>
-            <form onSubmit={this.handleLogin}>
+            <form onSubmit={this.handleRegister}>
               <FormControl fullWidth margin="normal">
                 <TextField
                   type="email"
@@ -79,45 +85,52 @@ class SigninPage extends Component {
                   value={email}
                   onChange={this._handleChange}
                 />
-                {/* {(errorCode.indexOf('email') !== -1 ||
-                  errorCode.indexOf('user') !== -1) && (
-                  <FormHelperText component="p" error>
-                    {errorMessage}
-                  </FormHelperText>
-                )} */}
               </FormControl>
               <FormControl fullWidth margin="normal">
                 <TextField
                   type="password"
                   label="Password"
                   name="password"
-                  password="password"
                   value={password}
                   onChange={this._handleChange}
                 />
-                {/* {errorCode.indexOf('auth/wrong-password') !== -1 && (
-                  <FormHelperText component="p" error>
-                    {errorMessage}
-                  </FormHelperText>
-                )} */}
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  type="password"
+                  label="Re-confirm password"
+                  name="rePassword"
+                  value={rePassword}
+                  onChange={this._handleChange}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <FormControlLabel
+                  value={confirmTerm}
+                  name="confirmTerm"
+                  onChange={this._handleChange}
+                  control={<Checkbox color="primary" />}
+                  label="I have read and confirm term"
+                />
               </FormControl>
               <FormControl fullWidth margin="normal">
                 <Button
                   variant="contained"
                   fullWidth
-                  color="primary"
                   type="submit"
+                  color="primary"
+                  disabled={!(password === rePassword && confirmTerm && email)}
                 >
-                  Login
+                  Register
                 </Button>
               </FormControl>
               <FormControl
                 fullWidth
                 margin="normal"
-                className={classes.linkRegister}
+                className={classes.linkLogin}
               >
-                <Link to="/register">
-                  <Button variant="text">I don&apos;t have account?</Button>
+                <Link to="/login">
+                  <Button variant="text">I have account?</Button>
                 </Link>
               </FormControl>
             </form>
@@ -131,9 +144,9 @@ class SigninPage extends Component {
 SigninPage.propTypes = {
   classes: PropTypes.object,
   history: PropTypes.object,
-  login: PropTypes.func,
+  register: PropTypes.func,
   authActionCreators: PropTypes.shape({
-    login: PropTypes.func,
+    register: PropTypes.func,
   }),
   authed: PropTypes.bool,
 };
@@ -141,6 +154,7 @@ SigninPage.propTypes = {
 const mapStateToProps = (state) => ({
   authed: state.auth.authed,
 });
+
 const mapDispatchToProps = (dispatch, props) => ({
   authActionCreators: bindActionCreators(authActions, dispatch),
 });

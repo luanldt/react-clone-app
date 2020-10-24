@@ -14,18 +14,21 @@ import CardTask from '../CardTask';
 import styles from './styles';
 
 class CardList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cardName: '',
-    };
-  }
+  state = {
+    cardName: '',
+  };
 
   renderCardList = () => {
     const { cards } = this.props;
     let xhtml = null;
     if (cards) {
-      xhtml = cards.map((card) => <CardTask onSubmitForm={this.handleSubmitCard} card={card} key={card.key} />);
+      xhtml = cards.map((card) => (
+        <CardTask
+          onSubmitForm={this.handleSubmitCard}
+          card={card}
+          key={card.key}
+        />
+      ));
     }
     return xhtml;
   };
@@ -82,6 +85,9 @@ class CardList extends Component {
 
 CardList.propTypes = {
   classes: PropTypes.object,
+  onSubmitCard: PropTypes.func,
+  cards: PropTypes.array,
+  list: PropTypes.object,
 };
 
 export default withStyles(styles)(CardList);

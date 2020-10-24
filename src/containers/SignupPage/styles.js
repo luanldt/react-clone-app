@@ -13,7 +13,7 @@ const styles = (theme) => ({
     backgroundSize: 'cover',
     backgroundPosition: '50%',
   },
-  loginWrapper: {
+  registerWrapper: {
     position: 'relative',
     overflow: 'inherit',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -22,8 +22,8 @@ const styles = (theme) => ({
     borderLeft: '3px solid ' + theme.palette.primary.main,
     padding: theme.spacing(1),
   },
-  buttonRegister: {
-    [theme.breakpoints.down('xs')]: {
+  buttonLogin: {
+    [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
     borderRadius: '50%',
@@ -33,10 +33,10 @@ const styles = (theme) => ({
     right: '-32px',
     position: 'absolute',
   },
-  linkRegister: {
+  linkLogin: {
     textAlign: 'center',
     display: 'none',
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       display: 'flex',
     },
     '& > a': {

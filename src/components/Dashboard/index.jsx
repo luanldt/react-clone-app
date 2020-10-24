@@ -1,19 +1,18 @@
 import { withStyles } from '@material-ui/core';
 import React, { Component } from 'react';
-import HomePage from '../../containers/HomePage';
 import Header from './Header';
 import styles from './styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 class Dashboard extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, children, authed, logout } = this.props;
     return (
       <div className={classes.root}>
-        <Header />
-        <div className={classes.contentWrapper}>
-          <HomePage />
-        </div>
+        <Header authed={authed} logout={logout} />
+        <div className={classes.contentWrapper}>{children}</div>
       </div>
     );
   }
@@ -21,6 +20,15 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object,
+  children: PropTypes.object,
+  authed: PropTypes.bool,
+  logout: PropTypes.func,
 };
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = (state) => ({
+  authed: state.auth.authed,
+});
+
+const withConnect = connect(mapStateToProps);
+
+export default compose(withConnect, withStyles(styles))(Dashboard);

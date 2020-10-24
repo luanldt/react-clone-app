@@ -11,18 +11,18 @@ import CardList from '../../components/CardList';
 import FormQuickAdd from '../../components/FormQuickAdd';
 import firebase from '../../firebase';
 import styles from './styles';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as cardActions from '../../actions/card';
 
 class HomePage extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      dataCard: [],
-      dataList: [],
-      listName: '',
-      cardName: '',
-    };
-  }
+  state = {
+    dataCard: [],
+    dataList: [],
+    listName: '',
+    cardName: '',
+  };
 
   componentDidMount() {
     const myList = firebase.database().ref('list/');
@@ -40,23 +40,9 @@ class HomePage extends React.Component {
         dataList: list,
       });
     });
-
-    const myCard = firebase.database().ref('cards/');
-    myCard.on('value', (snapshot) => {
-      const myCardFromDB = snapshot.val();
-      if (!myCardFromDB) {
-        console.log('card is null');
-        return;
-      }
-      const cards = Object.keys(snapshot.val()).map((key) => ({
-        key: key,
-        name: myCardFromDB[key].name,
-        listKey: myCardFromDB[key].listKey,
-      }));
-      this.setState({
-        dataCard: cards,
-      });
-    });
+    const { cardActionCreators } = this.props;
+    const { fetchListCard } = cardActionCreators;
+    fetchListCard();
   }
 
   handleAddList = ({ name }) => {
@@ -106,8 +92,8 @@ class HomePage extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { dataList, dataCard } = this.state;
+    const { classes, cards: dataCard } = this.props;
+    const { dataList } = this.state;
     return (
       <div className={classes.root}>
         <Grid container></Grid>
@@ -117,6 +103,7 @@ class HomePage extends React.Component {
             return (
               <GridListTile key={list.key} className={classes.gridList}>
                 <CardList
+                  key={list.key}
                   onSubmitCard={this.handleAddCard}
                   cards={cards}
                   list={list}
@@ -141,6 +128,22 @@ class HomePage extends React.Component {
   }
 }
 
-HomePage.propTypes = {};
+HomePage.propTypes = {
+  classes: PropTypes.object,
+  cardActionCreators: PropTypes.shape({
+    fetchListCard: PropTypes.func,
+  }),
+  cards: PropTypes.array,
+};
 
-export default withStyles(styles)(HomePage);
+const mapStateToProps = (state) => ({
+  cards: state.card.cards,
+});
+
+const mapDispatchToProps = (dispatch, props) => ({
+  cardActionCreators: bindActionCreators(cardActions, dispatch),
+});
+
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
+
+export default withConnect(withStyles(styles)(HomePage));

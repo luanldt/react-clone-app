@@ -1,6 +1,10 @@
+import { all } from 'redux-saga/effects';
+
+import card from './card';
+import auth from './auth';
+
 function* rootSaga() {
-  yield null;
-  console.log('Root saga');
+  yield all([...card, ...auth]);
 }
 
 export default rootSaga;

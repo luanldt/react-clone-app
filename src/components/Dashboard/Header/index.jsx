@@ -1,42 +1,49 @@
 import {
   AppBar,
+  Badge,
   IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
   withStyles,
-  InputBase,
-  Badge,
-  Menu,
-  MenuItem,
 } from '@material-ui/core';
-import React, { Component } from 'react';
-import styles from './styles';
 import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
-  Mail as MailIcon,
-  Notifications as NotificationsIcon,
   AccountCircle,
+  Mail as MailIcon,
+  Menu as MenuIcon,
   MoreVert as MoreIcon,
+  Notifications as NotificationsIcon,
+  Search as SearchIcon,
 } from '@material-ui/icons';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
+import * as authActions from '../../../actions/auth';
+import styles from './styles';
 
 class Header extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      menuId: 'primary-search-account-menu',
-      mobileMenuId: 'primary-search-account-menu-mobile',
-      anchorEl: null,
-      isMenuOpen: false,
-    };
-  }
+  state = {
+    menuId: 'primary-search-account-menu',
+    mobileMenuId: 'primary-search-account-menu-mobile',
+    anchorEl: null,
+    isMenuOpen: false,
+  };
 
   handleMenuClose = () => {
     this.setState({
       anchorEl: null,
     });
+  };
+
+  handleLogout = () => {
+    const { authActionCreators } = this.props;
+    const { logout } = authActionCreators;
+    if (logout) {
+      logout();
+    }
   };
 
   /**
@@ -57,6 +64,7 @@ class Header extends Component {
       >
         <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
         <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
+        <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
       </Menu>
     );
   };
@@ -153,6 +161,17 @@ class Header extends Component {
 
 Header.propTypes = {
   classes: PropTypes.object,
+  authActionCreators: PropTypes.shape({
+    logout: PropTypes.func,
+  }),
 };
 
-export default withStyles(styles)(Header);
+const mapStateToProps = (state) => ({});
+
+const mapDispathToProps = (dispatch, props) => ({
+  authActionCreators: bindActionCreators(authActions, dispatch),
+});
+
+const withConnect = connect(mapStateToProps, mapDispathToProps);
+
+export default compose(withConnect, withStyles(styles))(Header);

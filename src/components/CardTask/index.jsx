@@ -10,16 +10,13 @@ import styles from './styles';
 import firebase from '../../firebase';
 import CloseIcon from '@material-ui/icons/Close';
 import FormQuickAdd from '../FormQuickAdd';
+import PropTypes from 'prop-types';
 
 class CardTask extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      taskName: '',
-      isUpdate: false,
-    };
-  }
+  state = {
+    taskName: '',
+    isUpdate: false,
+  };
 
   handleDeleteCard = (key) => {
     firebase.database().ref(`cards/${key}`).remove();
@@ -65,5 +62,11 @@ class CardTask extends Component {
     );
   }
 }
+
+CardTask.propTypes = {
+  classes: PropTypes.object,
+  card: PropTypes.object,
+  onSubmitForm: PropTypes.func,
+};
 
 export default withStyles(styles)(CardTask);

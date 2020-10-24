@@ -1,5 +1,10 @@
-const { combineReducers } = require('redux');
+import card from './card';
+import auth from './auth';
+import { combineReducers } from 'redux';
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({
+  card,
+  auth,
+});
 
 export default rootReducer;

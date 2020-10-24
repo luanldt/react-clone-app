@@ -1,0 +1,3 @@
+export const FETCH_CARD = 'FETCH_CARD';
+export const FETCH_CARD_SUCCESS = 'FETCH_CARD_SUCCESS';
+export const FETCH_CARD_FAILED = 'FETCH_CARD_FAILED';

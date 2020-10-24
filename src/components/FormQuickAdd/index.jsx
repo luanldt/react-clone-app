@@ -58,7 +58,6 @@ class FormQuickAdd extends Component {
       >
         <InputBase
           className={classes.input}
-          id="input-card"
           size="small"
           placeholder={placeholder}
           value={name}
