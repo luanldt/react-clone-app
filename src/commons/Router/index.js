@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Switch } from 'react-router-dom';
 import { PRIVATE_ROUTES, PUBLIC_ROUTES } from '../../contants';
 import PrivateLayoutRoute from '../Layout/PrivateLayoutRoute';
 import PublicLayoutRoute from '../Layout/PublicLayoutRoute';
@@ -44,6 +44,7 @@ class AppRouter extends Component {
           <Switch>
             {this.renderPrivateRoute()}
             {this.renderPublicRoute()}
+            <Redirect to="/login" />
           </Switch>
         </Suspense>
       </Router>
