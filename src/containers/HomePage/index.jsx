@@ -9,91 +9,71 @@ import {
 import React from 'react';
 import CardList from '../../components/CardList';
 import FormQuickAdd from '../../components/FormQuickAdd';
-import firebase from '../../firebase';
 import styles from './styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as cardActions from '../../actions/card';
+import * as listActions from '../../actions/list';
 
 class HomePage extends React.Component {
-  state = {
-    dataCard: [],
-    dataList: [],
-    listName: '',
-    cardName: '',
-  };
-
   componentDidMount() {
-    const myList = firebase.database().ref('list/');
-    myList.on('value', (snapshot) => {
-      const myListFromDB = snapshot.val();
-      if (!myListFromDB) {
-        console.log('list is null');
-        return;
-      }
-      const list = Object.keys(snapshot.val()).map((key) => ({
-        key: key,
-        name: myListFromDB[key].name,
-      }));
-      this.setState({
-        dataList: list,
-      });
-    });
-    const { cardActionCreators } = this.props;
-    const { fetchListCard } = cardActionCreators;
-    fetchListCard();
+    const { cardActionCreators, listActionCreators } = this.props;
+    const { listenCardData } = cardActionCreators;
+    const { listenListData } = listActionCreators;
+    listenCardData();
+    listenListData();
   }
 
-  handleAddList = ({ name }) => {
-    const newListKey = firebase.database().ref('list/').push().key;
-    firebase
-      .database()
-      .ref('list/')
-      .update({
-        [newListKey]: {
-          name,
-        },
-      });
-  };
+  componentWillUnmount() {
+    const { cardActionCreators, listActionCreators } = this.props;
+    const { cancelListenCardData } = cardActionCreators;
+    const { cancelListenListData } = listActionCreators;
+    cancelListenCardData();
+    cancelListenListData();
+  }
 
-  handleAddCard = ({ key, name, cardKey }) => {
-    let newCardKey;
-    if (!cardKey) {
-      newCardKey = firebase.database().ref('cards/').push().key;
+  /** add list */
+  handleAddList = ({ name, key }) => {
+    const { listActionCreators } = this.props;
+    const { createList, updateList } = listActionCreators;
+    if (key) {
+      updateList({ name, key });
     } else {
-      newCardKey = cardKey;
+      createList({ name });
     }
-    firebase
-      .database()
-      .ref('cards/')
-      .update({
-        [newCardKey]: {
-          listKey: key,
-          name,
-        },
-      });
   };
 
-  handleDeleteList = (key) => {
-    const { dataCard } = this.state;
-    const cardInList = dataCard.filter((card) => card.listKey === key);
-    if (cardInList.length > 0) {
-      cardInList.forEach((card) => {
-        this.handleDeleteCard(card.key);
-      });
+  /** delete list */
+  handleDeleteList = (data) => {
+    const { listActionCreators } = this.props;
+    const { deleteList } = listActionCreators;
+    deleteList(data);
+  };
+
+  /** add card or update card */
+  handleAddCard = ({ key, name, cardKey }) => {
+    const { cardActionCreators } = this.props;
+    const { createCard, updateCard } = cardActionCreators;
+    if (cardKey) {
+      updateCard({ listKey: key, name, key: cardKey });
+    } else {
+      createCard({ listKey: key, name });
     }
-    firebase.database().ref(`list/${key}`).remove();
-    if (this.state.dataList.length === 1) {
-      this.setState({
-        dataList: [],
-      });
+  };
+
+  /** delete card */
+  handleDeleteCard = (data) => {
+    const { key } = data;
+    if (key) {
+      const { cardActionCreators } = this.props;
+      const { deleteCard } = cardActionCreators;
+      deleteCard({ key });
     }
   };
 
   render() {
-    const { classes, cards: dataCard } = this.props;
-    const { dataList } = this.state;
+    const { classes, cards: dataCard, lists: dataList } = this.props;
     return (
       <div className={classes.root}>
         <Grid container></Grid>
@@ -105,6 +85,9 @@ class HomePage extends React.Component {
                 <CardList
                   key={list.key}
                   onSubmitCard={this.handleAddCard}
+                  onSubmitList={this.handleAddList}
+                  onDeleteCard={this.handleDeleteCard}
+                  onDeleteList={this.handleDeleteList}
                   cards={cards}
                   list={list}
                 />
@@ -132,16 +115,32 @@ HomePage.propTypes = {
   classes: PropTypes.object,
   cardActionCreators: PropTypes.shape({
     fetchListCard: PropTypes.func,
+    createCard: PropTypes.func,
+    listenCardData: PropTypes.func,
+    cancelListenCardData: PropTypes.func,
+    deleteCard: PropTypes.func,
+    updateCard: PropTypes.func,
+  }),
+  listActionCreators: PropTypes.shape({
+    fetchList: PropTypes.func,
+    createList: PropTypes.func,
+    listenListData: PropTypes.func,
+    cancelListenListData: PropTypes.func,
+    deleteList: PropTypes.func,
+    updateList: PropTypes.func,
   }),
   cards: PropTypes.array,
+  lists: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({
   cards: state.card.cards,
+  lists: state.list.lists,
 });
 
-const mapDispatchToProps = (dispatch, props) => ({
+const mapDispatchToProps = (dispatch) => ({
   cardActionCreators: bindActionCreators(cardActions, dispatch),
+  listActionCreators: bindActionCreators(listActions, dispatch),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

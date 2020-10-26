@@ -14,17 +14,19 @@ import firebase from '../firebase';
 function getAuthChannel() {
   if (!this.authChannel) {
     this.authChannel = eventChannel((emit) => {
-      const unsubscribe = firebase
+      const listener = firebase
         .auth()
         .onAuthStateChanged((user) => emit({ user }));
-      return unsubscribe;
+      return () => {
+        listener.off();
+      };
     });
   }
   return this.authChannel;
 }
 
 function* firebaseAuthChannelSaga() {
-  const authChannel = yield call([{}, getAuthChannel]);
+  const authChannel = yield call([firebase, getAuthChannel]);
   while (true) {
     const result = yield take(authChannel);
     const { user } = result;

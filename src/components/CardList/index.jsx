@@ -15,7 +15,7 @@ import styles from './styles';
 
 class CardList extends Component {
   state = {
-    cardName: '',
+    isUpdate: false,
   };
 
   renderCardList = () => {
@@ -25,6 +25,7 @@ class CardList extends Component {
       xhtml = cards.map((card) => (
         <CardTask
           onSubmitForm={this.handleSubmitCard}
+          onDeleteCard={this.handleDeleteCard}
           card={card}
           key={card.key}
         />
@@ -33,39 +34,73 @@ class CardList extends Component {
     return xhtml;
   };
 
-  handleListNameChange = (e) => {
-    const value = e.target.value;
-    this.setState({
-      listName: value,
-    });
-  };
-
-  handleCardNameChange = (e) => {
-    const value = e.target.value;
-    this.setState({
-      cardName: value,
-    });
-  };
-
   handleSubmitCard = ({ name, cardKey }) => {
     const { onSubmitCard, list } = this.props;
     onSubmitCard({ key: list.key, name, cardKey });
+    this.setState({
+      isUpdate: false,
+    });
+  };
+
+  handleSubmitList = ({ name }) => {
+    const { onSubmitList, list } = this.props;
+    if (onSubmitList) {
+      onSubmitList({ name, key: list.key });
+    }
+    this.setState({
+      isUpdate: false,
+    });
+  };
+
+  handleDeleteCard = (data) => {
+    const { onDeleteCard } = this.props;
+    if (onDeleteCard) {
+      onDeleteCard(data);
+    }
+  };
+
+  handleEdit = () => {
+    this.setState({
+      isUpdate: true,
+    });
+  };
+
+  handleDeleteList = (data) => {
+    const { onDeleteList } = this.props;
+    if (onDeleteList) {
+      onDeleteList(data);
+    }
   };
 
   render() {
     const { classes, list } = this.props;
+    const { isUpdate } = this.state;
 
     return (
       <Card className={classes.root}>
-        <CardHeader
-          className={classes.header}
-          title={list.name}
-          action={
-            <IconButton onClick={() => this.handleDeleteList(list.key)}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          }
-        />
+        {isUpdate ? (
+          <CardContent className={classes.contentQuickCard}>
+            <FormQuickAdd
+              placeholder={'Add a list'}
+              onSubmitForm={this.handleSubmitList}
+              isShowAddButton={false}
+              initialData={list.name}
+            />
+          </CardContent>
+        ) : (
+          <CardHeader
+            onClick={this.handleEdit}
+            className={classes.header}
+            title={list.name}
+            action={
+              <IconButton
+                onClick={() => this.handleDeleteList({ key: list.key })}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            }
+          />
+        )}
         <PerfectScrollbar>
           <CardContent className={classes.content}>
             {this.renderCardList()}
@@ -86,6 +121,9 @@ class CardList extends Component {
 CardList.propTypes = {
   classes: PropTypes.object,
   onSubmitCard: PropTypes.func,
+  onSubmitList: PropTypes.func,
+  onDeleteCard: PropTypes.func,
+  onDeleteList: PropTypes.func,
   cards: PropTypes.array,
   list: PropTypes.object,
 };

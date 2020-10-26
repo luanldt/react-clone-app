@@ -30,7 +30,7 @@ class FormQuickAdd extends Component {
     });
   };
 
-  handleSubmitForm = (e) => {
+  handleSubmitForm = () => {
     const { onSubmitForm } = this.props;
     const { name } = this.state;
 
@@ -45,6 +45,12 @@ class FormQuickAdd extends Component {
     this.setState({
       name: '',
     });
+  };
+
+  handleKeyDown = (e) => {
+    if (e.ctrlKey && e.keyCode === 13) {
+      this.handleSubmitForm();
+    }
   };
 
   render() {
@@ -66,6 +72,7 @@ class FormQuickAdd extends Component {
           name="name"
           onBlur={this.handleSubmitForm}
           onChange={this._handleChange}
+          onKeyDown={this.handleKeyDown}
         />
         {isShowAddButton && (
           <Fragment>

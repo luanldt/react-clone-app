@@ -19,8 +19,8 @@ const reducer = (state = intialState, action) => {
       const { data } = action.payload;
       return {
         ...state,
-        authed: true,
-        currentUser: data,
+        authed: data.authed,
+        currentUser: data.currentUser,
       };
     }
     case authTypes.LOGIN_FAILED: {

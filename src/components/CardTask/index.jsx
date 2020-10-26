@@ -5,12 +5,11 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import React, { Component } from 'react';
-import styles from './styles';
-import firebase from '../../firebase';
 import CloseIcon from '@material-ui/icons/Close';
-import FormQuickAdd from '../FormQuickAdd';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import FormQuickAdd from '../FormQuickAdd';
+import styles from './styles';
 
 class CardTask extends Component {
   state = {
@@ -19,7 +18,10 @@ class CardTask extends Component {
   };
 
   handleDeleteCard = (key) => {
-    firebase.database().ref(`cards/${key}`).remove();
+    const { onDeleteCard } = this.props;
+    if (onDeleteCard) {
+      onDeleteCard({ key });
+    }
   };
 
   handleEdit = () => {
@@ -67,6 +69,7 @@ CardTask.propTypes = {
   classes: PropTypes.object,
   card: PropTypes.object,
   onSubmitForm: PropTypes.func,
+  onDeleteCard: PropTypes.func,
 };
 
 export default withStyles(styles)(CardTask);
