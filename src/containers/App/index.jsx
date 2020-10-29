@@ -7,6 +7,7 @@ import theme from "../../commons/Theme";
 import HomePage from "../HomePage/index";
 import CustomModal from "../../components/CustomModal";
 import SigninPage from '../SigninPage/index';
+import SignupPage from '../SignupPage/index';
 
 const store = configureStore();
 
@@ -15,7 +16,7 @@ function App(props) {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline>
-          <SigninPage />
+          <SignupPage />
           <CustomModal />
         </CssBaseline>
       </ThemeProvider>
