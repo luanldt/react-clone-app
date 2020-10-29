@@ -1,150 +1,78 @@
+import React from "react";
 import {
+  Box,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
+  Divider,
   FormControl,
+  Link,
+  Paper,
   TextField,
+  Typography,
   withStyles,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Redirect, withRouter } from 'react-router';
-import { Link } from 'react-router-dom';
-import { bindActionCreators, compose } from 'redux';
-import * as authActions from '../../actions/auth';
-import styles from './styles';
+} from "@material-ui/core";
+import styles from "./styles";
+import { Facebook, Instagram } from "@material-ui/icons";
 
-class SigninPage extends Component {
-  state = {
-    email: '',
-    password: '',
-  };
-
-  handleLogin = (e) => {
-    if (e) {
-      e.preventDefault();
-    }
-    const { email, password } = this.state;
-    const { authActionCreators } = this.props;
-    const { login } = authActionCreators;
-    if (!email || !password) {
-      return;
-    }
-    if (login) {
-      login({ email, password });
-    }
-  };
-
-  _handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({
-      [name]: value,
-    });
-  };
-
-  render() {
-    const { classes, authed } = this.props;
-    const { email, password } = this.state;
-    return (
-      <div className={classes.root}>
-        {authed && <Redirect to="/board" />}
-        <Card className={classes.loginWrapper}>
-          <CardHeader
-            title="Login"
-            className={classes.title}
-            action={
-              <Link to="/register">
-                <Button
-                  color="primary"
-                  className={classes.buttonRegister}
-                  variant="contained"
-                  size="large"
-                >
-                  <AddIcon fontSize="large" />
-                </Button>
-              </Link>
-            }
-          />
-          <CardContent>
-            <form onSubmit={this.handleLogin}>
-              <FormControl fullWidth margin="normal">
-                <TextField
-                  type="email"
-                  label="Email"
-                  name="email"
-                  value={email}
-                  onChange={this._handleChange}
-                />
-                {/* {(errorCode.indexOf('email') !== -1 ||
-                  errorCode.indexOf('user') !== -1) && (
-                  <FormHelperText component="p" error>
-                    {errorMessage}
-                  </FormHelperText>
-                )} */}
-              </FormControl>
-              <FormControl fullWidth margin="normal">
-                <TextField
-                  type="password"
-                  label="Password"
-                  name="password"
-                  password="password"
-                  value={password}
-                  onChange={this._handleChange}
-                />
-                {/* {errorCode.indexOf('auth/wrong-password') !== -1 && (
-                  <FormHelperText component="p" error>
-                    {errorMessage}
-                  </FormHelperText>
-                )} */}
-              </FormControl>
-              <FormControl fullWidth margin="normal">
-                <Button
-                  variant="contained"
-                  fullWidth
-                  color="primary"
-                  type="submit"
-                >
-                  Login
-                </Button>
-              </FormControl>
-              <FormControl
-                fullWidth
-                margin="normal"
-                className={classes.linkRegister}
+function SigninPage(props) {
+  const { classes } = props;
+  return (
+    <div className={classes.root}>
+      <div>
+        <Paper elevation={0} square className={classes.loginWrapper}>
+          <Box>
+            <Typography className={classes.logo} variant="h2">
+              Instagram
+            </Typography>
+          </Box>
+          <Box>
+            <FormControl fullWidth margin="normal">
+              <TextField fullWidth label="Username" />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField fullWidth label="Password" />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <Button variant="contained" fullWidth color="primary">
+                Đăng nhập
+              </Button>
+            </FormControl>
+            <Box style={{ display: "flex", alignItems: "center" }}>
+              <Divider style={{ flex: 1 }} />
+              <Typography
+                variant="caption"
+                style={{ paddingLeft: 8, paddingRight: 8 }}
               >
-                <Link to="/register">
-                  <Button variant="text">I don&apos;t have account?</Button>
-                </Link>
-              </FormControl>
-            </form>
-          </CardContent>
-        </Card>
+                OR
+              </Typography>
+              <Divider style={{ flex: 1 }} />
+            </Box>
+            <FormControl fullWidth margin="normal">
+              <Button
+                startIcon={<Facebook />}
+                variant="outlined"
+                color="primary"
+              >
+                Login with Facebook
+              </Button>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <Button
+                startIcon={<Instagram />}
+                variant="outlined"
+                color="secondary"
+              >
+                Login with Instagram
+              </Button>
+            </FormControl>
+          </Box>
+        </Paper>
+        <Paper elevation={0} square className={classes.registerWrapper}>
+          <Typography variant="caption">Bạn chưa có tài khoản?</Typography>
+          <Link variant="caption">Đăng ký</Link>
+        </Paper>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-SigninPage.propTypes = {
-  classes: PropTypes.object,
-  history: PropTypes.object,
-  login: PropTypes.func,
-  authActionCreators: PropTypes.shape({
-    login: PropTypes.func,
-  }),
-  authed: PropTypes.bool,
-};
-
-const mapStateToProps = (state) => ({
-  authed: state.auth.authed,
-});
-const mapDispatchToProps = (dispatch, props) => ({
-  authActionCreators: bindActionCreators(authActions, dispatch),
-});
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withConnect, withRouter, withStyles(styles))(SigninPage);
+export default withStyles(styles)(SigninPage);

@@ -1,54 +1,139 @@
 const styles = (theme) => ({
-  root: {},
-  gridListContainer: {
-    backgroundImage:
-      // eslint-disable-next-line quotes
-      "url('https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1280x1920/3e0ad1e0608ac348dbc1b02b3253d5ed/photo-1588021096284-22bd519a01ee.jpg')",
-    backgroundSize: 'cover',
-    backgroundPosition: '50%',
-    margin: 0 + '!important',
-    flexWrap: 'nowrap',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
+  root: {
+    backgroundColor: "#fafafa",
+  },
+  container: {
+    marginTop: theme.spacing(4),
+    display: "flex",
+  },
+  listWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "space-aroud",
+  },
+  avatarWrapper: {
+    "& + &": {
+      marginLeft: theme.spacing(2),
+    },
+  },
+  avatarWrapperImage: {
+    border: "2px solid orange",
+    borderRadius: "50%",
+  },
+  postContainer: {
+    marginTop: theme.spacing(4),
+  },
+  avatar: {
+    width: 60 + "px",
+    height: 60 + "px",
+    border: "1px solid transparent",
+  },
+  mediaWrapper: {
+    padding: 0,
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  toolbarWrapper: {
+    padding: 0,
+  },
+  toolbar: {
+    padding: 0,
+    minHeight: "auto",
+  },
+  avatarUser: {
+    width: 60 + "px",
+    height: 60 + "px",
+  },
+  suggestRow: {
+    padding: 0,
+  },
+  postCard: {
+    border: "1px solid #dbdbdb",
+  },
+  followPerson: {
     right: 0,
+    marginRight: "-12px!important",
   },
-  gridList: {
-    height: 'auto!important',
+  comment: {
+    padding: 0,
   },
-  cardHeader: {
-    padding: theme.spacing(1),
+  commentItem: {
+    padding: 0,
+    paddingRight: theme.spacing(2),
   },
-  cardContent: {
-    padding: theme.spacing(1) + 'px!important',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  numberLikeWrapper: {
+    paddingTop: 0,
   },
-  cardContainerContent: {
-    padding: theme.spacing(1),
+  numberLike: {
+    fontSize: "0.75rem",
   },
-  cardContainer: {
-    background: '#DDD',
+  captionWrapper: {
+    display: "flex",
   },
-  card: {
-    padding: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+  userCaption: {
+    fontWeight: "bold",
+    paddingRight: theme.spacing(1),
   },
-  paperInput: {
-    display: 'flex',
-    alignItems: 'center',
+  commentContainer: {
+    borderTop: "1px solid #dbdbdb",
+    display: "flex",
+    padding: theme.spacing(1) + "px!important",
   },
-  input: {
+  postTime: {
+    paddingBottom: theme.spacing(1),
+    fontSize: "0.65rem",
+    textTransform: "uppercase",
+  },
+  dropzone: {
+    marginTop: theme.spacing(2),
     flex: 1,
-    marginLeft: theme.spacing(1),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "20px",
+    borderWidth: "2px",
+    borderRadius: "2px",
+    borderColor: "#eeeeee",
+    borderStyle: "dashed",
+    backgroundColor: "#fafafa",
+    color: "#bdbdbd",
+    outline: "none",
+    transition: "border .24s ease-in-out",
+    "&:focus": {
+      borderColor: "#2196f3",
+    },
   },
-  cardQuickAdd: {
-    background: '#ebecf0',
+  thumbContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: theme.spacing(2),
   },
-  cardQuickAddContent: {
-    padding: theme.spacing(1) + 'px!important',
+  thumb: {
+    display: "inline-flex",
+    borderRadius: 2,
+    border: "1px solid #eaeaea",
+    marginBottom: 8,
+    marginRight: 8,
+    width: 100,
+    height: 100,
+    padding: 4,
+    boxSizing: "border-box",
+  },
+  thumbInner: {
+    display: "flex",
+    minWidth: 0,
+    overflow: "hidden",
+  },
+  img: {
+    display: "block",
+    width: "auto",
+    height: "100%",
+  },
+  buttonWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
 });
 

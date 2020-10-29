@@ -1,53 +1,39 @@
-import bgLogin from '../../assets/images/bg_login.jpg';
+import backgroundLogin from "../../assets/background-login.jpg";
 const styles = (theme) => ({
   root: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    background: "url(" + backgroundLogin + ")",
+    backgroundPosition: "50%",
+    backgroundSize: "cover",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'url(' + bgLogin + ')',
-    backgroundSize: 'cover',
-    backgroundPosition: '50%',
+  },
+  logo: {
+    margin: "22px auto 12px",
+    width: "175px",
+    fontSize: "25px",
+    textAlign: "center",
   },
   loginWrapper: {
-    position: 'relative',
-    overflow: 'inherit',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    border: "1px solid #dbdbdb",
+    padding: theme.spacing(2),
+    background: "rgba(255, 255, 255, 0.75)",
   },
-  title: {
-    borderLeft: '3px solid ' + theme.palette.primary.main,
-    padding: theme.spacing(1),
-  },
-  buttonRegister: {
-    [theme.breakpoints.down('xs')]: {
-      display: 'none',
-    },
-    borderRadius: '50%',
-    width: '64px',
-    height: '64px',
-    top: '5px',
-    right: '-32px',
-    position: 'absolute',
-  },
-  linkRegister: {
-    textAlign: 'center',
-    display: 'none',
-    [theme.breakpoints.down('xs')]: {
-      display: 'flex',
-    },
-    '& > a': {
-      display: 'block',
-      width: '100%',
-
-      '& > button': {
-        width: '100%',
-      },
+  registerWrapper: {
+    marginTop: theme.spacing(2),
+    border: "1px solid #dbdbdb",
+    padding: theme.spacing(2),
+    textAlign: "center",
+    background: "rgba(255, 255, 255, 0.75)",
+    "& > a": {
+      marginLeft: theme.spacing(1),
     },
   },
 });
-
 export default styles;

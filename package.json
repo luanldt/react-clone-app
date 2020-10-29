@@ -1,23 +1,24 @@
 {
-  "name": "clone-trello",
+  "name": "clone-instagram",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
     "firebase": "^7.24.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-perfect-scrollbar": "^1.5.8",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-dropzone": "^11.2.2",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "4.0.0",
     "react-toastify": "^6.0.9",
     "redux": "^4.0.5",
-    "redux-saga": "^1.1.3"
+    "redux-saga": "^1.1.3",
+    "web-vitals": "^0.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -26,10 +27,13 @@
     "eject": "react-scripts eject",
     "linting": "eslint src",
     "prettier": "prettier \"src/**/*.{js, css}\"",
-    "format": "yarn prettier --write "
+    "format": "yarn prettier --write"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -44,23 +48,11 @@
     ]
   },
   "devDependencies": {
-    "eslint-config-prettier": "^6.13.0",
+    "eslint-config-prettier": "^6.14.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.20.6",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.3.0",
-    "prettier": "^2.1.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "**/*.{js,css}": [
-      "eslint src",
-      "npm run format",
-      "git add"
-    ]
+    "eslint-plugin-react": "^7.21.5",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.2",
+    "prettier": "^2.1.2"
   }
 }

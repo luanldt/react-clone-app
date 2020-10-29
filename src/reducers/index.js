@@ -1,12 +1,4 @@
-import card from './card';
-import auth from './auth';
-import list from './list';
-import { combineReducers } from 'redux';
-
-const rootReducer = combineReducers({
-  list,
-  card,
-  auth,
-});
+import { combineReducers } from "redux";
+const rootReducer = combineReducers({});
 
 export default rootReducer;
