@@ -6,8 +6,7 @@ import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import theme from "../../commons/Theme";
 import HomePage from "../HomePage/index";
 import CustomModal from "../../components/CustomModal";
-import SigninPage from '../SigninPage/index';
-import SignupPage from '../SignupPage/index';
+import AppRouter from '../../commons/AppRouter';
 
 const store = configureStore();
 
@@ -16,7 +15,7 @@ function App(props) {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline>
-          <SignupPage />
+          <AppRouter />
           <CustomModal />
         </CssBaseline>
       </ThemeProvider>

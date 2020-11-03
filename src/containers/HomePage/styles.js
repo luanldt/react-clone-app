@@ -86,12 +86,14 @@ const styles = (theme) => ({
     textTransform: "uppercase",
   },
   dropzone: {
+    position: "relative",
     marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     flex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    padding: "20px",
+    padding: "5px",
     borderWidth: "2px",
     borderRadius: "2px",
     borderColor: "#eeeeee",
@@ -103,21 +105,23 @@ const styles = (theme) => ({
     "&:focus": {
       borderColor: "#2196f3",
     },
+    "& > button": {
+      position: "absolute",
+      top: "-2px",
+      right: "-2px",
+    },
   },
   thumbContainer: {
     display: "flex",
     flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: theme.spacing(2),
+    flexWrap: "wrap"
   },
   thumb: {
     display: "inline-flex",
     borderRadius: 2,
     border: "1px solid #eaeaea",
-    marginBottom: 8,
-    marginRight: 8,
-    width: 100,
-    height: 100,
+    width: "100%",
+    height: "100%",
     padding: 4,
     boxSizing: "border-box",
   },
@@ -128,12 +132,12 @@ const styles = (theme) => ({
   },
   img: {
     display: "block",
-    width: "auto",
-    height: "100%",
+    width: "100%",
+    height: "auto",
   },
   buttonWrapper: {
-    display: 'flex',
-    justifyContent: 'flex-end'
+    display: "flex",
+    justifyContent: "flex-end",
   },
 });
 

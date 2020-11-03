@@ -1,13 +1,16 @@
 import React from "react";
-import { compose } from "redux";
+import { bindActionCreators, compose } from "redux";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import styles from "./styles";
 import {
   AppBar,
+  Avatar,
   Badge,
+  CircularProgress,
   IconButton,
   InputBase,
+  LinearProgress,
   Menu,
   MenuItem,
   Toolbar,
@@ -23,9 +26,11 @@ import {
   MailOutline,
   AccountCircleOutlined,
 } from "@material-ui/icons";
+import * as authActions from "../../actions/auth";
+import { connect } from "react-redux";
 
 function HomePage(props) {
-  const { classes } = props;
+  const { classes, currentUser, authed, authActionCreators } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -49,6 +54,13 @@ function HomePage(props) {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleLogout = () => {
+    const { logout } = authActionCreators;
+    if (logout) {
+      logout();
+    }
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -62,6 +74,7 @@ function HomePage(props) {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -106,6 +119,11 @@ function HomePage(props) {
     </Menu>
   );
 
+  let photoURL = null;
+  if (authed && currentUser) {
+    photoURL = currentUser.photoURL;
+  }
+
   return (
     <div className={classes.grow}>
       <AppBar position="static" className={classes.appBar}>
@@ -147,7 +165,7 @@ function HomePage(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <AccountCircleOutlined color="action" />
+              {photoURL ? <Avatar src={photoURL} /> : <CircularProgress /> }
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
@@ -162,6 +180,7 @@ function HomePage(props) {
             </IconButton>
           </div>
         </Toolbar>
+        <LinearProgress variant="determinate" value={99} />
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
@@ -169,10 +188,26 @@ function HomePage(props) {
   );
 }
 
-HomePage.defaultProps = {};
+HomePage.defaultProps = {
+  authed: false,
+  currentUser: null,
+};
 
 HomePage.propTypes = {
   classes: PropTypes.object,
+  authed: PropTypes.bool,
+  currentUser: PropTypes.object,
 };
 
-export default compose(withStyles(styles))(HomePage);
+const mapStateToProps = (state) => ({
+  authed: state.auth.authed,
+  currentUser: state.auth.currentUser,
+});
+
+const mapDispatchToProps = (dispatch, props) => ({
+  authActionCreators: bindActionCreators(authActions, dispatch),
+});
+
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
+
+export default compose(withConnect, withStyles(styles))(HomePage);

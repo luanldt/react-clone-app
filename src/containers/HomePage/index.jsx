@@ -23,6 +23,7 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 import {
   BookmarkBorder as BookmarkBorderIcon,
+  Close,
   CommentOutlined as CommentOutlinedIcon,
   FavoriteBorder as FavoriteBorderIcon,
   MoreHoriz as MoreHorizIcon,
@@ -31,25 +32,49 @@ import {
 } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { compose } from "redux";
+import { connect } from "react-redux";
+import { bindActionCreators, compose } from "redux";
+import { Field, reduxForm } from "redux-form";
 import Header from "../Header";
 import styles from "./styles";
+import * as postActions from "../../actions/post";
+
+const renderTextField = ({
+  input,
+  meta: { touched, invalid, error },
+  ...custom
+}) => (
+  <InputBase
+    fullWidth
+    placeholder="Bạn đang nghĩ gì? 👀"
+    {...input}
+    {...custom}
+  />
+);
 
 function HomePage(props) {
-  const { classes } = props;
+  const { classes, handleSubmit, postActionCreators } = props;
   const [files, setFiles] = useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/*",
+    maxFiles: 1,
+    multiple: false,
     onDrop: (acceptedFiles) => {
+      console.log(acceptedFiles);
       setFiles(
         acceptedFiles.map((file) => ({
-          ...file,
+          file: file,
           preview: URL.createObjectURL(file),
         }))
       );
     },
   });
+
+  const handleClearFiles = (e) => {
+    e.stopPropagation();
+    setFiles([]);
+  };
 
   const thumbs = files.map((file) => (
     <div className={classes.thumb} key={file.name}>
@@ -62,10 +87,18 @@ function HomePage(props) {
   useEffect(
     () => () => {
       // Make sure to revoke the data uris to avoid memory leaks
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
+      // files.forEach((file) => URL.revokeObjectURL(file.preview));
     },
     [files]
   );
+
+  const handleSubmitPost = (data) => {
+    const { upload } = postActionCreators;
+    if (upload) {
+      const { content } = data;
+      upload({ content, files });
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -93,17 +126,30 @@ function HomePage(props) {
           <Box marginTop={4}>
             <Paper variant="outlined" square>
               <Box padding={2}>
-                <InputBase fullWidth placeholder="Bạn đang nghĩ gì? 👀" />
-                <div {...getRootProps()} className={classes.dropzone}>
-                  <input {...getInputProps()} />
-                  <p>Kéo và thả một số tệp tại đây hoặc nhấp để chọn tệp</p>
-                </div>
-                <div className={classes.thumbContainer}>{thumbs}</div>
-                <div className={classes.buttonWrapper}>
-                  <Button edge="end" variant="contained" color="primary">
-                    Đăng
-                  </Button>
-                </div>
+                <form onSubmit={handleSubmit(handleSubmitPost)}>
+                  <Field name="content" component={renderTextField} />
+                  <div {...getRootProps()} className={classes.dropzone}>
+                    <IconButton onClick={handleClearFiles} size="small">
+                      <Close size="small" />
+                    </IconButton>
+                    <input {...getInputProps()} />
+                    {thumbs.length > 0 ? (
+                      <div className={classes.thumbContainer}>{thumbs}</div>
+                    ) : (
+                      <p>Kéo và thả một số tệp tại đây hoặc nhấp để chọn tệp</p>
+                    )}
+                  </div>
+                  <div className={classes.buttonWrapper}>
+                    <Button
+                      type="submit"
+                      edge="end"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Đăng
+                    </Button>
+                  </div>
+                </form>
               </Box>
             </Paper>
           </Box>
@@ -264,4 +310,22 @@ function HomePage(props) {
 
 HomePage.propTypes = {};
 
-export default compose(withStyles(styles))(HomePage);
+const mapStateToProps = (state) => ({
+  authed: state.auth.authed,
+});
+
+const mapDispatchToProps = (dispatch, props) => ({
+  postActionCreators: bindActionCreators(postActions, dispatch),
+});
+
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
+
+const withReduxForm = reduxForm({
+  form: "POST",
+});
+
+export default compose(
+  withConnect,
+  withReduxForm,
+  withStyles(styles)
+)(HomePage);
