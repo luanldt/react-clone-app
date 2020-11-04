@@ -24,6 +24,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case authContants.REGISTER_FAILURE: {
+      // eslint-disable-next-line no-unused-vars
       const { error } = action.payload;
       return {
         ...state,
@@ -48,6 +49,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case authContants.LOGIN_FAILURE: {
+      // eslint-disable-next-line no-unused-vars
       const { error } = action.payload;
       return {
         ...state,
@@ -61,6 +63,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case authContants.LOGOUT_SUCCESS: {
+      // eslint-disable-next-line no-unused-vars
       const { data } = action.payload;
       return {
         ...state,
@@ -69,6 +72,7 @@ const reducer = (state = initialState, action) => {
       };
     }
     case authContants.LOGOUT_FAILURE: {
+      // eslint-disable-next-line no-unused-vars
       const { error } = action.payload;
       return {
         ...state,

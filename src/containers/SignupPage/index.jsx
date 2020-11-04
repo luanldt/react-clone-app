@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Button,
@@ -7,15 +6,16 @@ import {
   Paper,
   TextField,
   Typography,
-  withStyles,
+  withStyles
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
-import styles from "./styles";
-import { Facebook, Instagram, Mood } from "@material-ui/icons";
-import { Field, reduxForm } from "redux-form";
-import { bindActionCreators, compose } from "redux";
+import { Facebook, Mood } from "@material-ui/icons";
+import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
+import { Field, reduxForm } from "redux-form";
 import * as authActions from "../../actions/auth";
+import styles from "./styles";
 
 const renderTextField = ({
   label,

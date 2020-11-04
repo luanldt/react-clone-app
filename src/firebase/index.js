@@ -82,8 +82,18 @@ export const updatePostFile = ({ uid, postId, downloadURL, fileName }) => {
     .push();
   fileRef.set({
     fileURL: downloadURL,
-    fileName: fileName
-  })
+    fileName: fileName,
+  });
+};
+
+export const fetchListPost = ({ uid, lastKey }) => {
+  const postRef = db
+    .ref(POST_COLLECTION)
+    .child(uid)
+    .orderByKey()
+    .startAt(lastKey ? lastKey : "")
+    .limitToFirst(11);
+  return postRef;
 };
 /* end db */
 

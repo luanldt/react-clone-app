@@ -1,0 +1,1 @@
+export const SET_PROCESS = 'SET_PROGRESS';

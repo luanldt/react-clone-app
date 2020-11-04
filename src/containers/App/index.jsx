@@ -1,12 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
-import configureStore from "../../redux/configureStore";
-import { Provider } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import React from "react";
+import { Provider } from "react-redux";
+import AppRouter from "../../commons/AppRouter";
 import theme from "../../commons/Theme";
-import HomePage from "../HomePage/index";
 import CustomModal from "../../components/CustomModal";
-import AppRouter from '../../commons/AppRouter';
+import configureStore from "../../redux/configureStore";
 
 const store = configureStore();
 

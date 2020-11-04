@@ -20,3 +20,24 @@ export const uploadFailure = (error) => ({
     error,
   },
 });
+
+export const fetchListPost = (data) => ({
+  type: postTypes.FETCH_LIST,
+  payload: {
+    data,
+  },
+});
+
+export const fetchListPostSuccess = (data) => ({
+  type: postTypes.FETCH_LIST_SUCCESS,
+  payload: {
+    data,
+  },
+});
+
+export const fetchListPostFailure = (error) => ({
+  type: postTypes.FETCH_LIST_FAILURE,
+  payload: {
+    error,
+  },
+});

@@ -3,6 +3,7 @@ import { lazy } from "react";
 const SigninPage = lazy(() => import("../containers/SigninPage"));
 const SignupPage = lazy(() => import("../containers/SignupPage"));
 const HomePage = lazy(() => import("../containers/HomePage"));
+const TimelinePage = lazy(() => import("../containers/TimelinePage"));
 
 export const PUBLIC_ROUTES = [
   {
@@ -25,5 +26,11 @@ export const PRIVATE_ROUTES = [
     component: HomePage,
     exact: true,
     path: "/",
+  },
+  {
+    name: "TimelinePage",
+    component: TimelinePage,
+    exact: false,
+    path: "/timeline",
   },
 ];

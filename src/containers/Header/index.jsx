@@ -1,8 +1,3 @@
-import React from "react";
-import { bindActionCreators, compose } from "redux";
-import { withStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
-import styles from "./styles";
 import {
   AppBar,
   Avatar,
@@ -16,21 +11,32 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import {
-  Search as SearchIcon,
-  Notifications as NotificationsIcon,
-  Mail as MailIcon,
   AccountCircle,
-  MoreVert as MoreIcon,
-  NotificationsOutlined,
+  Mail as MailIcon,
   MailOutline,
-  AccountCircleOutlined,
+  MoreVert as MoreIcon,
+  Notifications as NotificationsIcon,
+  NotificationsOutlined,
+  Search as SearchIcon,
 } from "@material-ui/icons";
-import * as authActions from "../../actions/auth";
+import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
-
+import { withRouter } from "react-router-dom";
+import { bindActionCreators, compose } from "redux";
+import * as authActions from "../../actions/auth";
+import styles from "./styles";
 function HomePage(props) {
-  const { classes, currentUser, authed, authActionCreators } = props;
+  const {
+    classes,
+    currentUser,
+    authed,
+    authActionCreators,
+    progressPercent,
+    history,
+  } = props;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -60,6 +66,10 @@ function HomePage(props) {
       logout();
     }
   };
+  const handleMyAcount = () => {
+    console.log(props);
+    history.push("/timeline");
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -73,7 +83,7 @@ function HomePage(props) {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMyAcount}>My account</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
@@ -165,7 +175,7 @@ function HomePage(props) {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              {photoURL ? <Avatar src={photoURL} /> : <CircularProgress /> }
+              {photoURL ? <Avatar src={photoURL} /> : <CircularProgress />}
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
@@ -180,7 +190,9 @@ function HomePage(props) {
             </IconButton>
           </div>
         </Toolbar>
-        <LinearProgress variant="determinate" value={99} />
+        {progressPercent > 0 && (
+          <LinearProgress variant="determinate" value={progressPercent} />
+        )}
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
@@ -193,15 +205,21 @@ HomePage.defaultProps = {
   currentUser: null,
 };
 
+HomePage.defaultProps = {
+  progressPercent: 0,
+};
+
 HomePage.propTypes = {
   classes: PropTypes.object,
   authed: PropTypes.bool,
   currentUser: PropTypes.object,
+  progressPercent: PropTypes.number,
 };
 
 const mapStateToProps = (state) => ({
   authed: state.auth.authed,
   currentUser: state.auth.currentUser,
+  progressPercent: state.ui.progressPercent,
 });
 
 const mapDispatchToProps = (dispatch, props) => ({
@@ -210,4 +228,4 @@ const mapDispatchToProps = (dispatch, props) => ({
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withConnect, withStyles(styles))(HomePage);
+export default compose(withRouter, withConnect, withStyles(styles))(HomePage);

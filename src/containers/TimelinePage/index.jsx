@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   Container,
   Grid,
   Hidden,
@@ -14,59 +15,73 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  Paper,
   Typography,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Person } from "@material-ui/icons";
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import * as postActions from "../../actions/post";
+import cover from "../../assets/nature-design.jpg";
 import Post from "../../components/Post";
 import PostUpload from "../../components/PostUpload";
 import Header from "../Header";
 import styles from "./styles";
 
 function HomePage(props) {
-  const { classes } = props;
+  const { classes, currentUser, authed, postActionCreators, posts } = props;
+  const { fetchListPost } = postActionCreators;
+
+  let photoURL = null;
+  if (authed && currentUser) {
+    photoURL = currentUser.photoURL;
+  }
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop !==
+      document.documentElement.offsetHeight
+    )
+      return;
+    fetchListPost();
+  };
+
+  useEffect(() => {
+    fetchListPost();
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const renderListPost = () => posts.map((post) => <Post post={post} />);
 
   return (
     <div className={classes.root}>
       <Header />
+      <div
+        className={classes.cover}
+        style={{
+          backgroundImage: `url(${cover})`,
+          backgroundPosition: "50% 100%",
+          backgroundSize: "cover",
+        }}
+      >
+        {photoURL ? (
+          <Avatar
+            className={classes.primaryAvatar}
+            sizes="100px, 100px"
+            src={photoURL}
+          />
+        ) : (
+          <CircularProgress />
+        )}
+      </div>
       <Container maxWidth="md" spacing={2} className={classes.container}>
-        <Grid item md={8} xs={12}>
-          <div>
-            <Paper variant="outlined" square>
-              <Box padding={2}>
-                <List className={classes.listWrapper}>
-                  {[1, 2, 3, 4, 5, 6].map(() => (
-                    <ListItemAvatar className={classes.avatarWrapper}>
-                      <div className={classes.avatarWrapperImage}>
-                        <Avatar
-                          className={classes.avatar}
-                          src="https://instagram.fsgn2-2.fna.fbcdn.net/v/t51.2885-19/s150x150/120515938_665420324370973_1977124614355898627_n.jpg?_nc_ht=instagram.fsgn2-2.fna.fbcdn.net&_nc_ohc=pcvgT5s6eSgAX9kADIG&oh=c16e9a35298671d85902fc663989490e&oe=5FBF881D"
-                        ></Avatar>
-                      </div>
-                    </ListItemAvatar>
-                  ))}
-                </List>
-              </Box>
-            </Paper>
-          </div>
-          <Box paddingTop={4}>
-            <PostUpload />
-          </Box>
-          <div className={classes.postContainer}>
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-          </div>
-        </Grid>
         <Hidden smDown>
           <Grid item md={4}>
-            <Box paddingLeft={3}>
+            <Box paddingRight={3}>
               <Card>
                 <CardHeader
                   avatar={
@@ -114,6 +129,13 @@ function HomePage(props) {
             </Box>
           </Grid>
         </Hidden>
+        <Grid item md={8} xs={12}>
+          <PostUpload />
+          <div className={classes.postContainer}>
+            {renderListPost()}
+            <CircularProgress />
+          </div>
+        </Grid>
       </Container>
     </div>
   );
@@ -123,6 +145,8 @@ HomePage.propTypes = {};
 
 const mapStateToProps = (state) => ({
   authed: state.auth.authed,
+  currentUser: state.auth.currentUser,
+  posts: state.post.posts,
 });
 
 const mapDispatchToProps = (dispatch, props) => ({

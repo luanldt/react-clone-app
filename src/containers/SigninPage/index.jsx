@@ -1,4 +1,3 @@
-import React, { Fragment, useEffect } from "react";
 import {
   Box,
   Button,
@@ -7,15 +6,16 @@ import {
   Paper,
   TextField,
   Typography,
-  withStyles,
+  withStyles
 } from "@material-ui/core";
-import styles from "./styles";
 import { Facebook, Mood } from "@material-ui/icons";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
 import { Link, Redirect } from "react-router-dom";
-import * as authActions from "../../actions/auth";
+import { bindActionCreators, compose } from "redux";
 import { Field, reduxForm } from "redux-form";
+import * as authActions from "../../actions/auth";
+import styles from "./styles";
 
 const renderTextField = ({
   label,
@@ -81,7 +81,7 @@ function SigninPage(props) {
 
   return (
     <Fragment>
-      {authed && <Redirect to="/" />}
+      {authed && <Redirect to="/timeline" />}
       <div className={classes.root}>
         <div>
           <Paper elevation={0} square className={classes.loginWrapper}>
