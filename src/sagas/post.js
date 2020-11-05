@@ -8,10 +8,15 @@ import {
   takeLeading,
 } from "redux-saga/effects";
 import {
+  deletePostSuccess,
   fetchListPostFailure,
   fetchListPostSuccess,
   uploadFailure,
   uploadSuccess,
+  likePostFailure,
+  likePostSuccess,
+  commentPostSuccess,
+  commentPostFailure,
 } from "../actions/post";
 import { setProgress } from "../actions/ui";
 import * as postTypes from "../contants/post";
@@ -21,6 +26,11 @@ import {
   updatePostFile,
   uploadPostFile,
   fetchListPost as fetchListPostFirebase,
+  deletePost as deletePostFirebase,
+  likePost as likePostFirebase,
+  getUserByUID,
+  checkLikePost,
+  commentPost as commentPostFirebase,
 } from "../firebase";
 import snapshotToArray from "../helpers/snapshotToArray";
 
@@ -33,6 +43,7 @@ function* uploadPost({ payload }) {
       uid,
       content,
     });
+    const data = { content };
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const task = uploadPostFile({
@@ -67,9 +78,22 @@ function* uploadPost({ payload }) {
         downloadURL,
         fileName: file.file.name,
       });
+      data.files = [
+        {
+          fileName: file.file.name,
+          fileURL: downloadURL,
+        },
+      ];
+      const userSnapshot = yield call(getUserByUID, { uid });
+      const userSnapshotData = yield call(
+        [userSnapshot, userSnapshot.once],
+        "value"
+      );
+      const user = snapshotToArray([userSnapshotData.val()])[0];
+      data.user = user;
       yield put(setProgress(0));
     }
-    yield put(uploadSuccess(postKey));
+    yield put(uploadSuccess(data));
   } catch (e) {
     yield put(uploadFailure(e));
   }
@@ -84,11 +108,57 @@ function* fetchListPost({ payload }) {
       lastKey,
     });
     const dataSnapshot = yield call([posts, posts.once], "value");
-    let data = snapshotToArray(dataSnapshot.val());
+    let data = [];
     let newLastKey = lastKey;
-    if (data.length > 0) {
-      data = data.splice(data.length - 1, 1);
-      newLastKey = data[data.length - 1].key;
+    if (dataSnapshot) {
+      data = snapshotToArray(dataSnapshot.val());
+      if (data.length > 0) {
+        newLastKey = data[data.length - 1].key;
+        // user
+        const userSnapshot = yield call(getUserByUID, { uid });
+        const userSnapshotData = yield call(
+          [userSnapshot, userSnapshot.once],
+          "value"
+        );
+        const user = snapshotToArray([userSnapshotData.val()])[0];
+        for (let i = 0; i < data.length; i++) {
+          const d = data[i];
+          d.user = user;
+          d.numberLike = d.likes.length ? d.numberLike : 0;
+          // like
+          const likeSnapshot = yield call(checkLikePost, { uid, key: d.key });
+          const likeSnapshotData = yield call(
+            [likeSnapshot, likeSnapshot.once],
+            "value"
+          );
+          d.liked = likeSnapshotData.val();
+          // process file
+          if (d.files) {
+            d.files = snapshotToArray(d.files);
+          }
+          d.numberComment = 0;
+          if (d.comments) {
+            d.comments = snapshotToArray(d.comments);
+            d.numberComment = d.comments.length;
+            let newComments = [];
+            for (let indexComment = 0; indexComment < 2; indexComment++) {
+              const comment = d.comments[indexComment];
+              const userSnapshot = yield call(getUserByUID, {
+                uid: comment.uid,
+              });
+              const userSnapshotData = yield call(
+                [userSnapshot, userSnapshot.once],
+                "value"
+              );
+              const user = snapshotToArray([userSnapshotData.val()])[0];
+              comment.user = user;
+              newComments = [...newComments, ...[comment]];
+            }
+            d.comments = newComments;
+          }
+        }
+        data.reverse();
+      }
     }
     yield put(fetchListPostSuccess({ data, lastKey: newLastKey }));
     yield posts;
@@ -97,8 +167,54 @@ function* fetchListPost({ payload }) {
   }
 }
 
+function* deletePost({ payload }) {
+  const { key } = payload.data;
+  const { uid } = yield select((state) => state.auth.currentUser);
+  try {
+    const data = yield call(deletePostFirebase, {
+      uid,
+      key,
+    });
+    yield put(deletePostSuccess(data));
+  } catch (e) {
+    yield put(fetchListPostFailure(e));
+  }
+}
+
+function* likePost({ payload }) {
+  const { key } = payload.data;
+  const { uid } = yield select((state) => state.auth.currentUser);
+  try {
+    yield call(likePostFirebase, {
+      uid,
+      key,
+    });
+    yield put(likePostSuccess({ key }));
+  } catch (e) {
+    yield put(likePostFailure(e));
+  }
+}
+
+function* commentPost({ payload }) {
+  const { uid } = yield select((state) => state.auth.currentUser);
+  const { key, content } = payload.data;
+  try {
+    yield call(commentPostFirebase, {
+      uid,
+      key,
+      content,
+    });
+    yield put(commentPostSuccess());
+  } catch (e) {
+    yield put(commentPostFailure(e));
+  }
+}
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default [
   takeLatest(postTypes.UPLOAD, uploadPost),
   takeLeading(postTypes.FETCH_LIST, fetchListPost),
+  takeLeading(postTypes.DELETE_POST, deletePost),
+  takeLeading(postTypes.LIKE_POST, likePost),
+  takeLeading(postTypes.COMMENT_POST, commentPost),
 ];

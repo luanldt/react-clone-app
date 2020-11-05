@@ -55,7 +55,36 @@ function HomePage(props) {
     };
   }, []);
 
-  const renderListPost = () => posts.map((post) => <Post post={post} />);
+  const handleDeletePost = ({ key }) => {
+    const { deletePost } = postActionCreators;
+    deletePost({ key });
+  };
+
+  const handleLikePost = ({ key }) => {
+    const { likePost } = postActionCreators;
+    likePost({ key });
+  };
+
+  const handleCommentPost = ({ key, content }) => {
+    const { commentPost } = postActionCreators;
+    commentPost({ key, content });
+  };
+
+  const renderListPost = () =>
+    posts.map((post) => (
+      <Post
+        post={post}
+        onLikePost={handleLikePost}
+        onDeletePost={handleDeletePost}
+        onCommentPost={handleCommentPost}
+      />
+    ));
+
+  const handleUploadPost = (data) => {
+    const { upload } = postActionCreators;
+    if (!upload) return;
+    upload(data);
+  };
 
   return (
     <div className={classes.root}>
@@ -130,7 +159,7 @@ function HomePage(props) {
           </Grid>
         </Hidden>
         <Grid item md={8} xs={12}>
-          <PostUpload />
+          <PostUpload onSubmitUpload={handleUploadPost} />
           <div className={classes.postContainer}>
             {renderListPost()}
             <CircularProgress />

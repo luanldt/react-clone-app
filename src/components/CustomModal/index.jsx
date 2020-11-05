@@ -93,13 +93,13 @@ const CustomModal = (props) => {
                 <Toolbar className={classes.toolbar}>
                   <Box>
                     <IconButton size="medium">
-                      <FavoriteBorder fontSize="medium" />
+                      <FavoriteBorder fontSize="small" />
                     </IconButton>
                     <IconButton size="medium">
-                      <CommentOutlined fontSize="medium" />
+                      <CommentOutlined fontSize="small" />
                     </IconButton>
                     <IconButton size="medium">
-                      <Send fontSize="medium" />
+                      <Send fontSize="small" />
                     </IconButton>
                   </Box>
                   <Box className={classes.grow} />

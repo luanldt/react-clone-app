@@ -5,8 +5,11 @@ import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Field, reduxForm } from "redux-form";
 import styles from "./styles";
+import PropTypes from "prop-types";
 
-PostUpload.propTypes = {};
+PostUpload.propTypes = {
+  onSubmitUpload: PropTypes.func,
+};
 
 const renderTextField = ({
   input,
@@ -22,12 +25,7 @@ const renderTextField = ({
 );
 
 function PostUpload(props) {
-  const {
-    classes,
-    handleSubmit,
-    postActionCreators,
-    reset,
-  } = props;
+  const { classes, handleSubmit, reset, onSubmitUpload } = props;
   const [files, setFiles] = useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -67,13 +65,12 @@ function PostUpload(props) {
   );
 
   const handleSubmitPost = (data) => {
-    const { upload } = postActionCreators;
-    if (upload) {
-      const { content } = data;
-      upload({ content, files });
-      setFiles([]);
-      reset();
-    }
+    if (!onSubmitUpload) return;
+
+    const { content } = data;
+    onSubmitUpload({ content, files });
+    setFiles([]);
+    reset();
   };
 
   return (
